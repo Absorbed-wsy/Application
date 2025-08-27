@@ -1,0 +1,30 @@
+# 编译 
+# gcc pwm.c -o pwm
+
+# 手动操作
+# 导出到用户空间或者取消用户空间的导出。
+
+# echo 0 > /sys/class/pwm/pwmchip0/export
+# echo 0 > /sys/class/pwm/pwmchip0/unexport
+
+# 设置 PWM 周期单位为ns 比如 1KHz 频率的周期就是 1000000ns (注意，在任何的情况下都得保证 period 的值大于等于 duty_cycle 的值)
+
+# echo 1000000 > /sys/class/pwm/pwmchip10/pwm0/period
+
+# 设置PWM极性正常或翻转
+
+# echo "normal" > /sys/class/pwm/pwmchip0/pwm0/polarity
+# echo "inversed" > /sys/class/pwm/pwmchip0/pwm0/polarity
+
+# 使能和关闭PWM
+
+# echo 1 > /sys/class/pwm/pwmchip1/pwm0/enable
+# echo 0 > /sys/class/pwm/pwmchip1/pwm0/enable
+
+# 设置占空比(小于等于 period )
+
+# echo 100000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
+
+#输入捕获，不需要配置周期占空比，使能。直接读取capture即可
+# root@luckfox:/sys/class/pwm/pwmchip1/pwm0# cat capture 
+# 1000000 500000
