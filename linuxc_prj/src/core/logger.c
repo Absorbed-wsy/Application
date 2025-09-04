@@ -1,11 +1,11 @@
 // src/core/logger.c
-#include "logger.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <stdarg.h>
 #include <pthread.h>
+#include "logger.h"
 
 static FILE *log_file = NULL;
 static LogLevel log_level = LOG_LEVEL_INFO;
@@ -50,14 +50,12 @@ void logger_log(LogLevel level, const char *format, ...) {
     va_list args;
     va_start(args, format);
 
-    // 输出到控制台
     if (log_console) {
         fprintf(stderr, "[%s] [%s] ", time_str, level_str);
         vfprintf(stderr, format, args);
         fprintf(stderr, "\n");
     }
 
-    // 输出到文件
     if (log_file != NULL) {
         fprintf(log_file, "[%s] [%s] ", time_str, level_str);
         vfprintf(log_file, format, args);

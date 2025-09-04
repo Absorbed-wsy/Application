@@ -47,33 +47,69 @@ void config_free(Config *config) {
 }
 
 static char *trim(char *str) {
-    while (isspace((unsigned char)*str)) str++;
-    if (*str == 0) return str;
-
-    char *end = str + strlen(str) - 1;
-    while (end > str && isspace((unsigned char)*end)) end--;
-    end[1] = '\0';
+    if (!str) return str;
+    
+    char *start = str;
+    while (*start && isspace((unsigned char)*start)) 
+        start++;
+    
+    if (*start == '\0') {
+        *str = '\0';
+        return str;
+    }
+    
+    char *end = start + strlen(start) - 1;
+    while (end > start && isspace((unsigned char)*end))
+        end--;
+    
+    *(end + 1) = '\0';
+    
+    if (start != str) {
+        memmove(str, start, end - start + 2);
+    }
+    
     return str;
 }
 
+
 int config_load(Config *config, const char *filename) {
     FILE *file = fopen(filename, "r");
-    if (!file) return 0;
+    if (!file) {
+        perror("Failed to open config file");
+        return 0;
+    }
 
     char line[256];
     Section *current_section = NULL;
+    int line_num = 0;
 
     while (fgets(line, sizeof(line), file)) {
+        line_num++;
+        
+        line[sizeof(line) - 1] = '\0';
+        
+        char *newline = strchr(line, '\n');
+        if (newline) *newline = '\0';
+        
         char *ptr = trim(line);
         if (*ptr == ';' || *ptr == '#' || *ptr == '\0') continue;
 
         if (*ptr == '[') {
             char *end = strchr(ptr, ']');
-            if (!end) continue;
-            *end = '\0';
-            char *section_name = trim(ptr + 1);
-
-            // 查找或创建section
+            if (!end) {
+                fprintf(stderr, "Line %d: Missing closing bracket\n", line_num);
+                continue;
+            }
+            
+            char section_buf[64];
+            size_t len = end - ptr - 1;
+            if (len >= sizeof(section_buf)) len = sizeof(section_buf) - 1;
+            
+            strncpy(section_buf, ptr + 1, len);
+            section_buf[len] = '\0';
+            
+            char *section_name = trim(section_buf);
+            
             current_section = NULL;
             for (int i = 0; i < config->section_count; i++) {
                 if (strcmp(config->sections[i].name, section_name) == 0) {
@@ -83,31 +119,103 @@ int config_load(Config *config, const char *filename) {
             }
 
             if (!current_section) {
+                Section *new_sections = realloc(config->sections, 
+                                              (config->section_count + 1) * sizeof(Section));
+                if (!new_sections) {
+                    perror("Memory allocation failed for sections");
+                    fclose(file);
+                    return 0;
+                }
+                
+                config->sections = new_sections;
+                current_section = &config->sections[config->section_count];
                 config->section_count++;
-                config->sections = realloc(config->sections, config->section_count * sizeof(Section));
-                current_section = &config->sections[config->section_count - 1];
+                
+                memset(current_section, 0, sizeof(Section));
                 current_section->name = strdup(section_name);
-                current_section->pairs = NULL;
-                current_section->pair_count = 0;
+                if (!current_section->name) {
+                    perror("strdup failed for section name");
+                    fclose(file);
+                    return 0;
+                }
             }
-        } else if (current_section) {
+        } 
+        else if (current_section) {
             char *sep = strchr(ptr, '=');
-            if (!sep) continue;
-            *sep = '\0';
-            char *key = trim(ptr);
-            char *value = trim(sep + 1);
-
-            current_section->pair_count++;
-            current_section->pairs = realloc(current_section->pairs, current_section->pair_count * sizeof(KeyValue));
-            KeyValue *pair = &current_section->pairs[current_section->pair_count - 1];
+            if (!sep) {
+                fprintf(stderr, "Line %d: Missing equals sign\n", line_num);
+                continue;
+            }
+            
+            char key_buf[64], value_buf[256];
+            
+            size_t key_len = sep - ptr;
+            if (key_len >= sizeof(key_buf)) key_len = sizeof(key_buf) - 1;
+            strncpy(key_buf, ptr, key_len);
+            key_buf[key_len] = '\0';
+            char *key = trim(key_buf);
+            
+            char *val_start = sep + 1;
+            size_t val_len = strlen(val_start);
+            if (val_len >= sizeof(value_buf)) val_len = sizeof(value_buf) - 1;
+            strncpy(value_buf, val_start, val_len);
+            value_buf[val_len] = '\0';
+            char *value = trim(value_buf);
+            
+            int found = 0;
+            for (int j = 0; j < current_section->pair_count; j++) {
+                if (strcmp(current_section->pairs[j].key, key) == 0) {
+                    free(current_section->pairs[j].value);
+                    current_section->pairs[j].value = strdup(value);
+                    if (!current_section->pairs[j].value) {
+                        perror("strdup failed for value");
+                        fclose(file);
+                        return 0;
+                    }
+                    found = 1;
+                    break;
+                }
+            }
+            
+            if (found) continue;
+            
+            KeyValue *new_pairs = realloc(current_section->pairs, 
+                                        (current_section->pair_count + 1) * sizeof(KeyValue));
+            if (!new_pairs) {
+                perror("Memory allocation failed for key-value pairs");
+                fclose(file);
+                return 0;
+            }
+            
+            current_section->pairs = new_pairs;
+            KeyValue *pair = &current_section->pairs[current_section->pair_count];
+            memset(pair, 0, sizeof(KeyValue));
+            
             pair->key = strdup(key);
+            if (!pair->key) {
+                perror("strdup failed for key");
+                fclose(file);
+                return 0;
+            }
+            
             pair->value = strdup(value);
+            if (!pair->value) {
+                perror("strdup failed for value");
+                free(pair->key);
+                fclose(file);
+                return 0;
+            }
+            
+            current_section->pair_count++;
+            
+            //printf("Config Added: [%s] %s = %s", current_section->name, key, value);
         }
     }
 
     fclose(file);
     return 1;
 }
+
 
 const char *config_get_string(Config *config, const char *section, const char *key, const char *default_value) {
     for (int i = 0; i < config->section_count; i++) {
