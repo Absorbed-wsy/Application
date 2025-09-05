@@ -1,9 +1,9 @@
 // src/core/config.c
-#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "config.h"
 
 typedef struct {
     char *key;
