@@ -11,6 +11,7 @@
 #include "../core/process_pool.h"
 #include "../core/thread_pool.h"
 #include "../net/udp_server_client.h"
+#include "../net/tcp_server_client.h"
 
 
 typedef struct main_config {
@@ -89,7 +90,7 @@ int main(int argc, char *argv[])
 	thpool_add_work(thpool, PrivateTask, NULL);
 
     while (config->loop) {
-        LOG_INFO("main loop");
+        //LOG_INFO("main loop");
         sleep(1);
     }
 
