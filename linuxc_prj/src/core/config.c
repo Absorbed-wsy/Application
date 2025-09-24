@@ -4,6 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "config.h"
+#include "logger.h"
 
 typedef struct {
     char *key;
@@ -259,4 +260,30 @@ int config_get_bool(Config *config, const char *section, const char *key, int de
         }
     }
     return default_value;
+}
+
+
+int config_initialize(const char* filename, struct main_config *app)
+{
+    Config* conf = config_create();
+    config_load(conf, filename);
+
+    //log level
+    app->debug = config_get_int(conf, "Logging", "level", 1);
+    LOG_DEBUG("Main debug level = %d",app->debug);
+
+    //main loop enable
+    app->loop = config_get_bool(conf, "Config", "main_loop", 1);
+    LOG_DEBUG("Main loop %s",app->loop ? "Enable" : "Disable");
+
+    //Number of application threads
+    app->nthread = config_get_int(conf, "Thread", "nthread", 1);
+    LOG_DEBUG("The number of application threads is %d",app->nthread);
+
+
+    //other config
+
+    config_free(conf);
+
+    return 0;
 }
