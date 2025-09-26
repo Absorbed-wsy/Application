@@ -57,3 +57,10 @@ memset(buf, 0, 20);
 sprintf(buf, "{apptest}%d\n", test);
 tcp_server_send(client_fd, buf, strlen(buf), 100);
 # ==========================================================================================================================
+# 关于PID算法使用
+PID_Controller pid;
+PID_Init(&pid, 2.5f, 0.5f, 0.8f, 100.0f, 50.0f);
+PID_SetTarget(&pid, 30.0f);
+PID_Calculate(&pid, actual, time);
+float actual = System_Response(control);
+# ==========================================================================================================================
