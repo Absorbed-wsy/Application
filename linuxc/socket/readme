@@ -1,1 +1,0 @@
-gcc net_tool.c -o net_tool -lpthread

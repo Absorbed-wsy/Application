@@ -1,2 +1,0 @@
-gcc -o gpio_interrupt gpio_interrupt.c --sysroot=xxxx -lgpiod
-
