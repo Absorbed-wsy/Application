@@ -43,7 +43,7 @@ int adc_init(ADCController* adc, const char* adc_dir, int num_channels, ...)
 // 比例因子
 int adc_get_scale(ADCController* adc) 
 {
-    char scale_path[MAX_PATH_LEN];
+    char scale_path[300];
     snprintf(scale_path, sizeof(scale_path), "%s/in_voltage_scale", adc->adc_dir);
     
     FILE* scale_file = fopen(scale_path, "r");
