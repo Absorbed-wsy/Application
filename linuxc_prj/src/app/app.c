@@ -2,13 +2,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <ctype.h>
 #include <time.h>
 
-#include "../core/logger.h"
-#include "../algo/pid.h"
-#include "../peripherals/adc.h"
-#include "../modules/mcp4725/mcp4725.h"
+#include "app.h"
+#include "logger.h"
+#include "config.h"
+#include "process_pool.h"
+#include "thread_pool.h"
+#include "cmdline.h"
+
+int main_loop(void);
+void PrivateTask(void* arg);
+
 
 unsigned long long get_current_time_us(void) 
 {
@@ -17,20 +24,56 @@ unsigned long long get_current_time_us(void)
     return (unsigned long long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 }
 
-int app_init(void)
+int main_init(int argc, char *argv[]) 
 {
-    LOG_INFO("App Init");
-    return 0;
-}
+    LOG_INFO("Main Init");
 
-int app_loop(void)
-{
-    //LOG_INFO("App Loop");
+    Aconf *config = malloc(sizeof(Aconf));
+    
+    //log init
+    logger_init(NULL, LOG_LEVEL_INFO, 1);
+    LOG_INFO("Program started");
+
+    //config init
+    config_initialize("app.conf", config);
+    logger_init(NULL, config->debug, 1);
+
+    //command parsing
+    if(argc > 1) {
+        config->loop = command_parsing(argv);
+        if(config->loop == 0)
+            return 0;
+    }
+
+    //process thread task
+    threadpool thpool = thpool_init(config->nthread);
+	thpool_add_work(thpool, PrivateTask, NULL);
+
+    while (config->loop) {
+        main_loop();
+        sleep(1);
+    }
+
+    thpool_wait(thpool);
+	thpool_destroy(thpool);
+
+    LOG_INFO("Program over");
+
     return 0;
 }
 
 int main_loop(void)
 {
-    //LOG_INFO("Main Loop");
+    LOG_INFO("Main Loop");
     return 0;
+}
+
+void PrivateTask(void* arg) 
+{
+    //int value = (int)(uintptr_t)arg;
+    LOG_INFO("App Init");
+    for(;;) {
+        LOG_INFO("App Loop");
+        sleep(1);
+    }
 }

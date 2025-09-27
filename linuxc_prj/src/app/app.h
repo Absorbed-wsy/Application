@@ -2,9 +2,6 @@
 #ifndef APP_H
 #define APP_H
 
-
-int app_init(void);
-int app_loop(void);
-int main_loop(void);
+int main_init(int argc, char *argv[]);
 
 #endif // CONFIG_H
