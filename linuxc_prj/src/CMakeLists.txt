@@ -14,5 +14,6 @@ add_library(framework STATIC ${SOURCES})
 find_package(Threads REQUIRED)
 target_link_libraries(framework PRIVATE Threads::Threads)
 
-# find_package(SQLite3 REQUIRED)
-# target_link_libraries(framework PRIVATE SQLite::SQLite3)
+# libgpiod库
+#find_package(libgpiod REQUIRED)
+#target_link_libraries(framework PRIVATE libgpiod::gpiod)

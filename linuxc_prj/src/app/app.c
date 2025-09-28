@@ -26,8 +26,6 @@ unsigned long long get_current_time_us(void)
 
 int main_init(int argc, char *argv[]) 
 {
-    LOG_INFO("Main Init");
-
     Aconf *config = malloc(sizeof(Aconf));
     
     //log init
@@ -51,7 +49,6 @@ int main_init(int argc, char *argv[])
 
     while (config->loop) {
         main_loop();
-        sleep(1);
     }
 
     thpool_wait(thpool);
@@ -64,16 +61,17 @@ int main_init(int argc, char *argv[])
 
 int main_loop(void)
 {
-    LOG_INFO("Main Loop");
+    for(;;) {
+
+        sleep(1);
+    }
     return 0;
 }
 
-void PrivateTask(void* arg) 
+void PrivateTask(void* arg)
 {
-    //int value = (int)(uintptr_t)arg;
-    LOG_INFO("App Init");
     for(;;) {
-        LOG_INFO("App Loop");
+
         sleep(1);
     }
 }
