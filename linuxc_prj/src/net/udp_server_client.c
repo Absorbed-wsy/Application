@@ -6,7 +6,11 @@
 
 #include "udp_server_client.h"
 
-
+/**
+ * @brief 设置socket超时时间
+ * @param sockfd socket文件描述符
+ * @param milliseconds 超时时间（毫秒）
+ */
 static void set_socket_timeout(int sockfd, int milliseconds) 
 {
     struct timeval tv;
@@ -16,7 +20,11 @@ static void set_socket_timeout(int sockfd, int milliseconds)
     setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 }
 
-// UDP 服务器 初始化
+/**
+ * @brief UDP服务器初始化
+ * @param port 服务器端口号
+ * @return 成功返回socket描述符，失败返回-1
+ */
 int udp_server_init(int port)
 {
     int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -39,13 +47,24 @@ int udp_server_init(int port)
     return sockfd;
 }
 
-// UDP 服务器 关闭
+/**
+ * @brief UDP服务器关闭
+ * @param sockfd socket描述符
+ */
 void udp_server_exit(int sockfd)
 {
     close(sockfd);
 }
 
-// UDP 服务器 接收数据
+/**
+ * @brief UDP服务器接收数据
+ * @param sockfd socket描述符
+ * @param buf 接收数据缓冲区
+ * @param len 缓冲区长度
+ * @param timeout 超时时间（毫秒）
+ * @param client_addr 客户端地址结构体指针（可为NULL）
+ * @return 成功返回接收字节数，失败返回-1
+ */
 int udp_server_recv(int sockfd, char *buf, int len, int timeout, struct sockaddr_in *client_addr)
 {
     struct sockaddr_in temp_addr; // 临时存储地址
@@ -60,7 +79,7 @@ int udp_server_recv(int sockfd, char *buf, int len, int timeout, struct sockaddr
     set_socket_timeout(sockfd, timeout);
 
     ssize_t len_bytes = recvfrom(sockfd, buf, len, 0, (struct sockaddr*)target_addr, &addr_len);
-    if (len < 0) {
+    if (len_bytes < 0) {
         perror("UDP recvfrom error");
         return -1;
     }
@@ -70,7 +89,15 @@ int udp_server_recv(int sockfd, char *buf, int len, int timeout, struct sockaddr
     return len_bytes;
 }
 
-// UDP 服务器 发送数据
+/**
+ * @brief UDP服务器发送数据
+ * @param sockfd socket描述符
+ * @param buf 发送数据缓冲区
+ * @param len 发送数据长度
+ * @param timeout 超时时间（毫秒）
+ * @param client_addr 客户端地址结构体指针
+ * @return 成功返回发送字节数，失败返回-1
+ */
 int udp_server_send(int sockfd, char *buf, int len, int timeout, struct sockaddr_in *client_addr)
 {
     socklen_t addr_len = sizeof(struct sockaddr_in);
@@ -82,7 +109,11 @@ int udp_server_send(int sockfd, char *buf, int len, int timeout, struct sockaddr
     return len_bytes;
 }
 
-// UDP 客户端 初始化
+/**
+ * @brief UDP客户端初始化
+ * @param server 服务器地址结构体指针
+ * @return 成功返回socket描述符，失败返回-1
+ */
 int udp_client_init(struct sockaddr_in *server)
 {
     //char ip[16]="x.x.x.x";int port;
@@ -103,13 +134,23 @@ int udp_client_init(struct sockaddr_in *server)
     return sockfd;
 }
 
-// UDP 客户端 关闭
+/**
+ * @brief UDP客户端关闭
+ * @param sockfd socket描述符
+ */
 void udp_client_exit(int sockfd)
 {
     close(sockfd);
 }
 
-// UDP 客户端 接收数据
+/**
+ * @brief UDP客户端接收数据
+ * @param sockfd socket描述符
+ * @param buf 接收数据缓冲区
+ * @param len 缓冲区长度
+ * @param timeout 超时时间（毫秒）
+ * @return 成功返回接收字节数，失败返回-1
+ */
 int udp_client_recv(int sockfd, char *buf, int len, int timeout)
 {
     struct sockaddr_in server_addr;
@@ -118,7 +159,7 @@ int udp_client_recv(int sockfd, char *buf, int len, int timeout)
     set_socket_timeout(sockfd, timeout);
 
     ssize_t len_bytes = recvfrom(sockfd, buf, len, 0, (struct sockaddr*)&server_addr, &addr_len);
-    if (len < 0) {
+    if (len_bytes < 0) {
         perror("UDP recvfrom error");
         return -1;
     }
@@ -128,7 +169,15 @@ int udp_client_recv(int sockfd, char *buf, int len, int timeout)
     return len_bytes;
 }
 
-// UDP 客户端 发送数据
+/**
+ * @brief UDP客户端发送数据
+ * @param sockfd socket描述符
+ * @param buf 发送数据缓冲区
+ * @param len 发送数据长度
+ * @param timeout 超时时间（毫秒）
+ * @param server_addr 服务器地址结构体指针
+ * @return 成功返回发送字节数，失败返回-1
+ */
 int udp_client_send(int sockfd, char *buf, int len, int timeout, struct sockaddr_in *server_addr)
 {
     socklen_t addr_len = sizeof(struct sockaddr_in);

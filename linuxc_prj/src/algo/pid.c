@@ -8,6 +8,15 @@
 
 #include "pid.h"
 
+/**
+ * @brief 初始化PID控制器参数
+ * @param pid PID控制器结构体指针
+ * @param Kp 比例系数
+ * @param Ki 积分系数
+ * @param Kd 微分系数
+ * @param max_out 最大输出限制
+ * @param max_int 最大积分限制
+ */
 void PID_Init(PID_Controller *pid, float Kp, float Ki, float Kd, float max_out, float max_int) 
 {
     pid->Kp = Kp;
@@ -24,6 +33,11 @@ void PID_Init(PID_Controller *pid, float Kp, float Ki, float Kd, float max_out, 
     pid->mode = 0;
 }
 
+/**
+ * @brief 设置PID控制器模式
+ * @param pid PID控制器结构体指针
+ * @param mode 控制模式 (0: 位置式PID, 1: 增量式PID)
+ */
 void PID_SetMode(PID_Controller *pid, int mode) 
 {
     pid->mode = mode;
@@ -33,11 +47,23 @@ void PID_SetMode(PID_Controller *pid, int mode)
     pid->integral = 0;
 }
 
+/**
+ * @brief 设置PID控制器目标值
+ * @param pid PID控制器结构体指针
+ * @param new_target 新的目标设定值
+ */
 void PID_SetTarget(PID_Controller *pid, float new_target) 
 {
     pid->target = new_target;
 }
 
+/**
+ * @brief 执行PID控制计算
+ * @param pid PID控制器结构体指针
+ * @param actual 实际测量值
+ * @param current_time_us 当前时间戳 (微秒)
+ * @return PID控制器输出值
+ */
 float PID_Calculate(PID_Controller *pid, float actual, unsigned long long current_time_us)
 {
     // 计算时间增量
@@ -85,4 +111,3 @@ float PID_Calculate(PID_Controller *pid, float actual, unsigned long long curren
     
     return output;
 }
-

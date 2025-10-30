@@ -7,6 +7,11 @@
 #include "tcp_server_client.h"
 
 
+/**
+ * @brief 设置socket超时时间
+ * @param sockfd socket文件描述符
+ * @param milliseconds 超时时间（毫秒）
+ */
 static void set_socket_timeout(int sockfd, int milliseconds) 
 {
     struct timeval tv;
@@ -16,7 +21,11 @@ static void set_socket_timeout(int sockfd, int milliseconds)
     setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 }
 
-// TCP 服务器 初始化
+/**
+ * @brief TCP服务器初始化
+ * @param port 服务器端口号
+ * @return 成功返回服务器socket描述符，失败返回-1
+ */
 int tcp_server_init(int port)
 {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -45,7 +54,11 @@ int tcp_server_init(int port)
     return server_fd;
 }
 
-// TCP 服务器 连接
+/**
+ * @brief TCP服务器接受客户端连接
+ * @param sockfd 服务器socket描述符
+ * @return 成功返回客户端socket描述符，失败返回-1
+ */
 int tcp_server_accept(int sockfd)
 {
     int server_fd = sockfd;
@@ -64,13 +77,23 @@ int tcp_server_accept(int sockfd)
     return client_fd;
 }
 
-// TCP 服务器 关闭
+/**
+ * @brief TCP服务器关闭
+ * @param sockfd socket描述符
+ */
 void tcp_server_exit(int sockfd)
 {
     close(sockfd);
 }
 
-// TCP 服务器 接收数据
+/**
+ * @brief TCP服务器接收数据
+ * @param sockfd 客户端socket描述符
+ * @param buf 接收数据缓冲区
+ * @param len 缓冲区长度
+ * @param timeout 超时时间（毫秒）
+ * @return 成功返回接收字节数，失败返回-1
+ */
 int tcp_server_recv(int sockfd, char *buf, int len, int timeout)
 {
     int client_fd = sockfd;
@@ -90,7 +113,14 @@ int tcp_server_recv(int sockfd, char *buf, int len, int timeout)
     return len_bytes;
 }
 
-// TCP 服务器 发送数据
+/**
+ * @brief TCP服务器发送数据
+ * @param sockfd 客户端socket描述符
+ * @param buf 发送数据缓冲区
+ * @param len 发送数据长度
+ * @param timeout 超时时间（毫秒）
+ * @return 成功返回发送字节数，失败返回-1
+ */
 int tcp_server_send(int sockfd, char *buf, int len, int timeout)
 {
     int client_fd = sockfd;
@@ -103,14 +133,18 @@ int tcp_server_send(int sockfd, char *buf, int len, int timeout)
 }
 
 
-// TCP 客户端 初始化
+/**
+ * @brief TCP客户端初始化
+ * @param server 服务器地址结构体指针
+ * @return 成功返回socket描述符，失败返回-1
+ */
 int tcp_client_init(struct sockaddr_in *server)
 {
     //char ip[16]="192.168.3.189";int port=10000;
     //struct sockaddr_in* addr = malloc(sizeof(struct sockaddr_in));
     //memset(addr, 0, sizeof(*addr));
     //addr->sin_family = AF_INET;
-    //ddr->sin_port = htons(port);
+    //addr->sin_port = htons(port);
     //inet_pton(AF_INET, ip, &addr->sin_addr);
 
     struct sockaddr_in* server_addr = (struct sockaddr_in*)server;
@@ -132,13 +166,23 @@ int tcp_client_init(struct sockaddr_in *server)
     return sockfd;
 }
 
-// TCP 客户端 关闭
+/**
+ * @brief TCP客户端关闭
+ * @param sockfd socket描述符
+ */
 void tcp_client_exit(int sockfd)
 {
     close(sockfd);
 }
 
-// TCP 客户端 接收数据
+/**
+ * @brief TCP客户端接收数据
+ * @param sockfd socket描述符
+ * @param buf 接收数据缓冲区
+ * @param len 缓冲区长度
+ * @param timeout 超时时间（毫秒）
+ * @return 成功返回接收字节数，失败返回-1
+ */
 int tcp_client_recv(int sockfd, char *buf, int len, int timeout)
 {
     set_socket_timeout(sockfd, timeout);
@@ -156,7 +200,14 @@ int tcp_client_recv(int sockfd, char *buf, int len, int timeout)
     return len_bytes;
 }
 
-// TCP 客户端 发送数据
+/**
+ * @brief TCP客户端发送数据
+ * @param sockfd socket描述符
+ * @param buf 发送数据缓冲区
+ * @param len 发送数据长度
+ * @param timeout 超时时间（毫秒）
+ * @return 成功返回发送字节数，失败返回-1
+ */
 int tcp_client_send(int sockfd, char *buf, int len, int timeout)
 {
     set_socket_timeout(sockfd, timeout);

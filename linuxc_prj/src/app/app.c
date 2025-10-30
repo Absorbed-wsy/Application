@@ -17,6 +17,10 @@
 int main_loop(void);
 void PrivateTask(void* arg);
 
+/**
+ * @brief 获取当前时间戳（微秒）
+ * @return 当前时间戳（微秒）
+ */
 unsigned long long get_current_time_us(void)
 {
     struct timespec ts;
@@ -24,6 +28,12 @@ unsigned long long get_current_time_us(void)
     return (unsigned long long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 }
 
+/**
+ * @brief 应用主初始化函数
+ * @param argc 命令行参数个数
+ * @param argv 命令行参数数组
+ * @return 程序执行状态 (0: 正常退出, 非0: 异常退出)
+ */
 int main_init(int argc, char *argv[])
 {
     Aconf *config = malloc(sizeof(Aconf));
@@ -59,6 +69,10 @@ int main_init(int argc, char *argv[])
     return 0;
 }
 
+/**
+ * @brief 主循环函数
+ * @return 执行状态
+ */
 int main_loop(void)
 {
     for(;;) {
@@ -68,6 +82,10 @@ int main_loop(void)
     return 0;
 }
 
+/**
+ * @brief 私有任务处理函数
+ * @param arg 任务参数（当前未使用）
+ */
 void PrivateTask(void* arg)
 {
     for(;;) {

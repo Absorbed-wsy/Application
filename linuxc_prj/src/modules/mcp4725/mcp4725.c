@@ -9,6 +9,11 @@
 
 #include "mcp4725.h"
 
+/**
+ * @brief 初始化MCP4725 DAC设备
+ * @param i2c_path I2C设备路径 (e.g. "/dev/i2c-1")
+ * @return 成功返回文件描述符，失败返回-1
+ */
 int MCP4725_Init(const char *i2c_path)
 {
     int fd = 0;
@@ -26,6 +31,10 @@ int MCP4725_Init(const char *i2c_path)
     return fd;
 }
 
+/**
+ * @brief 反初始化MCP4725 DAC设备
+ * @param fd 设备文件描述符
+ */
 void MCP4725_DeInit(int fd)
 {
     if (fd >= 0) {
@@ -34,11 +43,16 @@ void MCP4725_DeInit(int fd)
     }
 }
 
+/**
+ * @brief 向MCP4725写入输出电压值
+ * @param fd 设备文件描述符
+ * @param Vout 输出电压值 (单位: mV)
+ */
 void MCP4725_WriteData_Voltage(int fd, unsigned int Vout)
 {
     struct i2c_msg msgs[1];
     struct i2c_rdwr_ioctl_data msgset;
-    unsigned char buffer[2];
+    unsigned char buffer[3];
     
     buffer[0] = (((Vout*4096)/VREF_5V)&0x0f00) >> 8;
     buffer[1] = (((Vout*4096)/VREF_5V)&0x00ff);

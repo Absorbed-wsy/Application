@@ -12,6 +12,12 @@ static LogLevel log_level = LOG_LEVEL_INFO;
 static int log_console = 1;
 static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+/**
+ * @brief 初始化日志系统
+ * @param filename 日志文件名 (NULL表示不输出到文件)
+ * @param level 日志级别
+ * @param console 是否输出到控制台 (1:是, 0:否)
+ */
 void logger_init(const char *filename, LogLevel level, int console) {
     log_level = level;
     log_console = console;
@@ -25,6 +31,12 @@ void logger_init(const char *filename, LogLevel level, int console) {
     }
 }
 
+/**
+ * @brief 记录日志消息
+ * @param level 日志级别
+ * @param format 格式化字符串
+ * @param ... 可变参数列表
+ */
 void logger_log(LogLevel level, const char *format, ...) {
     if (level < log_level) {
         return;

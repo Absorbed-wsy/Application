@@ -8,6 +8,10 @@
 #include "adc.h"
 #include "gpio.h"
 
+/**
+ * @brief 打印命令行使用说明
+ * @param cmdline 命令行参数数组
+ */
 static void print_usage(char **cmdline)
 {
     printf("\nUsage:\n");
@@ -16,6 +20,11 @@ static void print_usage(char **cmdline)
     printf("\n");
 }
 
+/**
+ * @brief 命令行参数解析器
+ * @param cmdline 命令行参数数组
+ * @return 返回程序执行模式 (1:主循环模式, 0:命令模式)
+ */
 int command_parsing(char **cmdline)
 {
     const char *cmd = cmdline[1];

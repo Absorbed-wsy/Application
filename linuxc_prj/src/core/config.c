@@ -22,6 +22,10 @@ struct Config {
     int section_count;
 };
 
+/**
+ * @brief 创建配置结构体
+ * @return 成功返回Config指针，失败返回NULL
+ */
 Config *config_create() {
     Config *config = malloc(sizeof(Config));
     if (config) {
@@ -31,6 +35,10 @@ Config *config_create() {
     return config;
 }
 
+/**
+ * @brief 释放配置结构体内存
+ * @param config 配置结构体指针
+ */
 void config_free(Config *config) {
     if (config) {
         for (int i = 0; i < config->section_count; i++) {
@@ -47,6 +55,11 @@ void config_free(Config *config) {
     }
 }
 
+/**
+ * @brief 去除字符串首尾空白字符
+ * @param str 输入字符串
+ * @return 处理后的字符串指针
+ */
 static char *trim(char *str) {
     if (!str) return str;
     
@@ -72,7 +85,12 @@ static char *trim(char *str) {
     return str;
 }
 
-
+/**
+ * @brief 从文件加载配置
+ * @param config 配置结构体指针
+ * @param filename 配置文件名
+ * @return 成功返回1，失败返回0
+ */
 int config_load(Config *config, const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -217,7 +235,14 @@ int config_load(Config *config, const char *filename) {
     return 1;
 }
 
-
+/**
+ * @brief 获取字符串类型配置值
+ * @param config 配置结构体指针
+ * @param section 配置段名
+ * @param key 配置键名
+ * @param default_value 默认值
+ * @return 配置值字符串指针
+ */
 const char *config_get_string(Config *config, const char *section, const char *key, const char *default_value) {
     for (int i = 0; i < config->section_count; i++) {
         Section *sec = &config->sections[i];
@@ -234,6 +259,14 @@ const char *config_get_string(Config *config, const char *section, const char *k
     return default_value;
 }
 
+/**
+ * @brief 获取整数类型配置值
+ * @param config 配置结构体指针
+ * @param section 配置段名
+ * @param key 配置键名
+ * @param default_value 默认值
+ * @return 配置整数值
+ */
 int config_get_int(Config *config, const char *section, const char *key, int default_value) {
     const char *str = config_get_string(config, section, key, NULL);
     if (str) {
@@ -242,6 +275,14 @@ int config_get_int(Config *config, const char *section, const char *key, int def
     return default_value;
 }
 
+/**
+ * @brief 获取浮点数类型配置值
+ * @param config 配置结构体指针
+ * @param section 配置段名
+ * @param key 配置键名
+ * @param default_value 默认值
+ * @return 配置浮点数值
+ */
 double config_get_double(Config *config, const char *section, const char *key, double default_value) {
     const char *str = config_get_string(config, section, key, NULL);
     if (str) {
@@ -250,6 +291,14 @@ double config_get_double(Config *config, const char *section, const char *key, d
     return default_value;
 }
 
+/**
+ * @brief 获取布尔类型配置值
+ * @param config 配置结构体指针
+ * @param section 配置段名
+ * @param key 配置键名
+ * @param default_value 默认值
+ * @return 配置布尔值 (1:true, 0:false)
+ */
 int config_get_bool(Config *config, const char *section, const char *key, int default_value) {
     const char *str = config_get_string(config, section, key, NULL);
     if (str) {
@@ -262,7 +311,12 @@ int config_get_bool(Config *config, const char *section, const char *key, int de
     return default_value;
 }
 
-
+/**
+ * @brief 初始化应用配置
+ * @param filename 配置文件名
+ * @param app 应用配置结构体指针
+ * @return 执行状态码
+ */
 int config_initialize(const char* filename, struct main_config *app)
 {
     Config* conf = config_create();
@@ -279,7 +333,6 @@ int config_initialize(const char* filename, struct main_config *app)
     //Number of application threads
     app->nthread = config_get_int(conf, "Thread", "nthread", 1);
     LOG_DEBUG("The number of application threads is %d",app->nthread);
-
 
     //other config
 
