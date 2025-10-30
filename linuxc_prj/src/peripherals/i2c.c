@@ -54,6 +54,66 @@ void i2c_close(I2CDevice* dev)
     }
 }
 
+// ================== 基本字节操作 ==================
+
+/**
+ * @brief SMBus读字节 (无寄存器地址)
+ * @param dev I2C设备指针
+ * @return 成功返回读取的字节，失败返回-1
+ */
+int i2c_smbus_read_byte(I2CDevice* dev) 
+{
+    struct i2c_smbus_ioctl_data args;
+    union i2c_smbus_data data;
+
+    memset(&args, 0, sizeof(args));
+    memset(&data, 0, sizeof(data));
+
+    args.read_write = I2C_SMBUS_READ;
+    args.command = 0;
+    args.size = I2C_SMBUS_BYTE;
+    args.data = &data;
+
+    for (int i = 0; i < I2C_MAX_RETRIES; i++) {
+        if (ioctl(dev->fd, I2C_SMBUS, &args) == 0) {
+            return data.byte & 0xFF;
+        }
+        usleep(I2C_RETRY_DELAY_MS * 1000);
+    }
+    fprintf(stderr, "SMBus read byte failed: %s\n", strerror(errno));
+    return -1;
+}
+
+/**
+ * @brief SMBus写字节 (无寄存器地址)
+ * @param dev I2C设备指针
+ * @param value 要写入的字节值
+ * @return 成功返回0，失败返回-1
+ */
+int i2c_smbus_write_byte(I2CDevice* dev, unsigned char value) 
+{
+    struct i2c_smbus_ioctl_data args;
+    union i2c_smbus_data data;
+
+    memset(&args, 0, sizeof(args));
+    memset(&data, 0, sizeof(data));
+
+    data.byte = value;
+    args.read_write = I2C_SMBUS_WRITE;
+    args.command = 0;
+    args.size = I2C_SMBUS_BYTE;
+    args.data = &data;
+
+    for (int i = 0; i < I2C_MAX_RETRIES; i++) {
+        if (ioctl(dev->fd, I2C_SMBUS, &args) == 0) {
+            return 0;
+        }
+        usleep(I2C_RETRY_DELAY_MS * 1000);
+    }
+    fprintf(stderr, "SMBus write byte failed: %s\n", strerror(errno));
+    return -1;
+}
+
 // ================== 字节数据操作 (带寄存器地址) ==================
 
 /**
