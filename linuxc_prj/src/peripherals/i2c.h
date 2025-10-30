@@ -14,8 +14,6 @@ typedef struct {
 I2CDevice* i2c_init(const char* dev_path, unsigned char addr);
 void i2c_close(I2CDevice* dev);
 
-int i2c_smbus_read_byte(I2CDevice* dev);
-int i2c_smbus_write_byte(I2CDevice* dev, unsigned char value);
 int i2c_smbus_read_byte_data(I2CDevice* dev, unsigned char reg);
 int i2c_smbus_write_byte_data(I2CDevice* dev, unsigned char reg, unsigned char value);
 int i2c_smbus_read_word_data(I2CDevice* dev, unsigned char reg);

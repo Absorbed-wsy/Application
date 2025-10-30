@@ -4,4 +4,4 @@
 
 int main_init(int argc, char *argv[]);
 
-#endif // CONFIG_H
+#endif // APP_H

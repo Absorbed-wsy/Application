@@ -41,7 +41,7 @@ int adc_init(ADCController* adc, const char* adc_dir, int num_channels, ...)
 }
 
 // 比例因子
-int adc_get_scale(ADCController* adc) 
+int adc_get_scale(ADCController* adc)
 {
     char scale_path[300];
     snprintf(scale_path, sizeof(scale_path), "%s/in_voltage_scale", adc->adc_dir);
@@ -61,7 +61,7 @@ int adc_get_scale(ADCController* adc)
 }
 
 // 获取指定通道电压
-int adc_get_voltage(ADCController* adc, int channel_index, float* voltage) 
+int adc_get_voltage(ADCController* adc, int channel_index, float* voltage)
 {
     if (channel_index < 0 || channel_index >= adc->channel_count) {
         fprintf(stderr, "Invalid channel index\n");
@@ -83,7 +83,7 @@ int adc_get_voltage(ADCController* adc, int channel_index, float* voltage)
 }
 
 // 清理资源
-void adc_cleanup(ADCController* adc) 
+void adc_cleanup(ADCController* adc)
 {
     for (int i = 0; i < adc->channel_count; i++) {
         if (adc->channels[i].raw_file) {
@@ -91,4 +91,16 @@ void adc_cleanup(ADCController* adc)
         }
     }
     adc->channel_count = 0;
+}
+
+float get_adc_value(int chn)
+{
+    ADCController ADC;
+    float voltage;
+    adc_init(&ADC, "/sys/bus/iio/devices/iio:device0", 1, chn);
+    adc_get_scale(&ADC);
+    adc_get_voltage(&ADC, 0, &voltage);
+    adc_cleanup(&ADC);
+
+    return voltage;
 }

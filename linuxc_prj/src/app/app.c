@@ -1,4 +1,4 @@
-// src/app/config.c
+// src/app/app.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,18 +13,18 @@
 #include "thread_pool.h"
 #include "cmdline.h"
 
+
 int main_loop(void);
 void PrivateTask(void* arg);
 
-
-unsigned long long get_current_time_us(void) 
+unsigned long long get_current_time_us(void)
 {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return (unsigned long long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 }
 
-int main_init(int argc, char *argv[]) 
+int main_init(int argc, char *argv[])
 {
     Aconf *config = malloc(sizeof(Aconf));
     

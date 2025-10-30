@@ -24,5 +24,6 @@ int adc_get_scale(ADCController* adc);
 int adc_get_voltage(ADCController* adc, int channel_index, float* voltage);
 void adc_cleanup(ADCController* adc);
 
+float get_adc_value(int chn);
 
 #endif // ADC_H
