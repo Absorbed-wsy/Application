@@ -1,42 +1,13 @@
 # ==========================================================================================================================
 # 关于线程池的使用方法
-int main(int argc, char *argv[]) 
-{
-    int loop_status=0;
-    
-    //log init
-    logger_init(NULL, LOG_LEVEL_INFO, 1);
-    LOG_INFO("Program started");
-
-    //config init
-    config_initialize("app.conf");
-
-    //command parsing
-    if(argc > 1)
-        loop_status = command_parsing(argv);
-
-    //process thread task
-    LOG_INFO("Making threadpool with 4 threads");
-    threadpool thpool = thpool_init(2);
-
-    LOG_INFO("Adding 4 tasks to threadpool");
-	for (int i=0; i<4; i++){
-		thpool_add_work(thpool, PrivateTask, (void*)(uintptr_t)i);
-	};
-
-    while (loop_status) {
-        LOG_INFO("main loop");
-        sleep(1);
-    }
-
-    LOG_INFO("Killing threadpool");
-    thpool_wait(thpool);
-	thpool_destroy(thpool);
-
-    LOG_INFO("Program over");
-    
-    exit(0);
-}
+//process thread task
+LOG_INFO("Making threadpool with 4 threads");
+threadpool thpool = thpool_init(4);
+LOG_INFO("Adding 4 tasks to threadpool");
+for (int i=0; i<4; i++) {thpool_add_work(thpool, PrivateTask, (void*)(uintptr_t)i);};
+LOG_INFO("Killing threadpool");
+thpool_wait(thpool);
+thpool_destroy(thpool);
 
 void PrivateTask(void* arg) {
     int value = (int)(uintptr_t)arg;
@@ -63,4 +34,14 @@ PID_Init(&pid, 2.5f, 0.5f, 0.8f, 100.0f, 50.0f);
 PID_SetTarget(&pid, 30.0f);
 PID_Calculate(&pid, actual, time);
 float actual = System_Response(control);
+# ==========================================================================================================================
+# 关于代码运行时间检测方案
+struct timespec start, end;
+clock_gettime(CLOCK_MONOTONIC, &start);
+measured_function();
+clock_gettime(CLOCK_MONOTONIC, &end);
+
+double elapsed = (end.tv_sec - start.tv_sec) * 1e9; 
+elapsed += (end.tv_nsec - start.tv_nsec);
+printf("执行时间: %.6f 毫秒\n", elapsed / 1e6);
 # ==========================================================================================================================
