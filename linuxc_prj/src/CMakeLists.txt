@@ -14,6 +14,11 @@ add_library(framework STATIC ${SOURCES})
 find_package(Threads REQUIRED)
 target_link_libraries(framework PRIVATE Threads::Threads)
 
-# libgpiod库
-#find_package(libgpiod REQUIRED)
-#target_link_libraries(framework PRIVATE libgpiod::gpiod)
+# libgpiod链接库
+find_library(GPIOD_LIBRARY gpiod)
+if(GPIOD_LIBRARY)
+    target_link_libraries(framework PRIVATE ${GPIOD_LIBRARY})
+    message(STATUS "Found libgpiod: ${GPIOD_LIBRARY}")
+else()
+    message(WARNING "libgpiod not found, GPIO functionality will be disabled")
+endif()
