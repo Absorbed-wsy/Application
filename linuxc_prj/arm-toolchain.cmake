@@ -11,17 +11,6 @@ set(CMAKE_C_COMPILER "${TOOLCHAIN_DIR}/bin/aarch64-none-linux-gnu-gcc")
 set(CMAKE_CXX_COMPILER "${TOOLCHAIN_DIR}/bin/aarch64-none-linux-gnu-g++")
 set(CMAKE_FIND_ROOT_PATH "${TOOLCHAIN_DIR}/aarch64-none-linux-gnu/libc")
 
-#RK3506
-#set(TOOLCHAIN_DIR "${PROJECT_ROOT}/../BSP_RK3506/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf")
-#set(CMAKE_C_COMPILER "${TOOLCHAIN_DIR}/bin/arm-none-linux-gnueabihf-gcc")
-#set(CMAKE_CXX_COMPILER "${TOOLCHAIN_DIR}/bin/arm-none-linux-gnueabihf-g++")
-#set(CMAKE_FIND_ROOT_PATH "${TOOLCHAIN_DIR}/arm-none-linux-gnueabihf/libc")
-
-#S5P6818
-#set(CMAKE_C_COMPILER /opt/FriendlyARM/toolchain/6.4-aarch64/bin/aarch64-linux-gcc)
-#set(CMAKE_CXX_COMPILER /opt/FriendlyARM/toolchain/6.4-aarch64/bin/aarch64-linux-g++)
-#set(CMAKE_FIND_ROOT_PATH /opt/FriendlyARM/toolchain/6.4-aarch64/aarch64-cortexa53-linux-gnu/sysroot)
-
 # 搜索策略：只在目标环境查找库
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
