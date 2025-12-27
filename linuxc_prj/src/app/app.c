@@ -77,15 +77,8 @@ int main_init(int argc, char *argv[])
  */
 int main_loop(void)
 {
-    LOG_INFO("Initializing OLED...\n");
-    if (OLED_Init() < 0) {
-        fprintf(stderr, "Failed to initialize OLED\n");
-        return -1;
-    }
     for(;;) {
-        OLED_ShowString(0, 0, (u8*)"Hello World!", 16);
-        OLED_Refresh();
-
+        
         sleep(1);
     }
     return 0;

@@ -45,3 +45,15 @@ double elapsed = (end.tv_sec - start.tv_sec) * 1e9;
 elapsed += (end.tv_nsec - start.tv_nsec);
 printf("执行时间: %.6f 毫秒\n", elapsed / 1e6);
 # ==========================================================================================================================
+# 关于ssd1306 0.96 oled使用
+LOG_INFO("Initializing OLED...\n");
+if (OLED_Init() < 0) {
+    fprintf(stderr, "Failed to initialize OLED\n");
+    return -1;
+}
+for(;;) {
+    OLED_ShowString(0, 0, (u8*)"Hello World!", 16);
+    OLED_Refresh();
+    sleep(1);
+}
+# ==========================================================================================================================
