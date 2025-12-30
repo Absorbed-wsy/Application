@@ -13,6 +13,7 @@
 #include "thread_pool.h"
 #include "cmdline.h"
 
+#include "uart.h"
 #include "ssd1306/linux_oled.h"
 
 

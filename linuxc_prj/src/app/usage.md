@@ -57,3 +57,27 @@ for(;;) {
     sleep(1);
 }
 # ==========================================================================================================================
+# 关于uart外设的使用
+// Define UART configuration
+uart_config_t config = UART_CONFIG_DEFAULT;
+config.baud_rate = 115200; // Set baud rate to 115200
+
+// Open UART (modify path according to actual device)
+const char *device_path = "/dev/ttyAS4"; // UART device path
+uart_handle_t uart = uart_open(device_path, &config);
+
+// Example 1: Send data
+const char *send_data = "Hello UART!\r\n";
+int send_len = strlen(send_data);
+uart_write(uart, (const uint8_t *)send_data, send_len, 1000);
+
+// Example 2: Receive data (with timeout)
+uint8_t recv_buffer[256];
+int ret=0;
+
+ret = uart_read(uart, recv_buffer, sizeof(recv_buffer) - 1, 5000);
+if (ret >= 0) {
+    recv_buffer[ret] = '\0'; // Add string terminator
+    printf("Receive successful, bytes: %d, data: %s\n", ret, recv_buffer);
+}
+# ==========================================================================================================================
