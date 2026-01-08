@@ -81,3 +81,30 @@ if (ret >= 0) {
     printf("Receive successful, bytes: %d, data: %s\n", ret, recv_buffer);
 }
 # ==========================================================================================================================
+# 关于gpio中断触发使用
+void gpio_interrupt_cb(int gpio, gpio_event_type_t event_type, 
+                      unsigned long sec, unsigned long nsec) {
+    const char *event_str;
+    
+    switch (event_type) {
+        case GPIO_EVENT_RISING_EDGE:
+            event_str = "上升沿";
+            break;
+        case GPIO_EVENT_FALLING_EDGE:
+            event_str = "下降沿";
+            break;
+        case GPIO_EVENT_BOTH_EDGES:
+            event_str = "双边沿";
+            break;
+        default:
+            event_str = "未知";
+            break;
+    }
+    
+    printf("GPIO %d 中断: %s, 时间戳: %ld.%09ld\n", 
+           gpio, event_str, sec, nsec);
+}
+
+gpio_interrupt_init("/dev/gpiochip0", 39, GPIO_EVENT_RISING_EDGE);
+gpio_interrupt_register_callback(39, gpio_interrupt_cb);
+# ==========================================================================================================================

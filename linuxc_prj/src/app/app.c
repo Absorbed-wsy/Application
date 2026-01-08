@@ -7,14 +7,6 @@
 #include <time.h>
 
 #include "app.h"
-#include "logger.h"
-#include "config.h"
-#include "process_pool.h"
-#include "thread_pool.h"
-#include "cmdline.h"
-
-#include "uart.h"
-#include "ssd1306/linux_oled.h"
 
 
 int main_loop(void);

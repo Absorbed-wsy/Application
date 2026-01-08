@@ -8,6 +8,9 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # 添加子目录
 add_subdirectory(src)
 
+# 添加头文件包含路径
+include_directories(src src/algo src/app src/core src/db src/modules src/net src/peripherals src/util)
+
 # 可执行文件
 add_executable(main_app src/app/main.c)
 
