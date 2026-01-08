@@ -11,3 +11,7 @@ mkdir build
 cd build
 cmake -DCMAKE_TOOLCHAIN_FILE=../arm-toolchain.cmake ..
 make
+
+# debug/release
+cmake -DCMAKE_BUILD_TYPE=Debug/Release/RelWithDebInfo/MinSizeRel ..
+gdb -tui app
